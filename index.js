@@ -41,35 +41,126 @@ const generateTrackingId = () => {
 // ================= VERIFY TOKEN =================
 
 
+// const verifyFBToken = async (req, res, next) => {
+//   try {
+//     const authHeader = req.headers.authorization;
 
+//     if (!authHeader) {
+//       return res.status(401).json({ message: "No token provided" });
+//     }
+
+//     if (!authHeader.startsWith("Bearer ")) {
+//       return res.status(401).json({ message: "Invalid token format" });
+//     }
+
+//     const token = authHeader.split(" ")[1];
+
+//     const decoded = await admin.auth().verifyIdToken(token);
+
+//     if (!decoded?.email) {
+//       return res.status(403).json({ message: "Invalid token payload" });
+//     }
+
+//     req.user = decoded;
+//     req.email = decoded.email;
+
+//     next();
+//   } catch (error) {
+//     console.error("Firebase auth error:", error.message);
+
+//     return res.status(403).json({
+//       message: "Unauthorized / Invalid token",
+//       error: error.message,
+//     });
+//   }
+// };
+
+// const verifyFBToken = async (req, res, next) => {
+//   try {
+//     const authHeader = req.headers.authorization;
+
+//     if (!authHeader) {
+//       return res.status(401).json({ message: "No token provided" });
+//     }
+
+//     if (!authHeader.startsWith("Bearer ")) {
+//       return res.status(401).json({ message: "Invalid token format" });
+//     }
+
+//     const token = authHeader.split(" ")[1];
+
+//     const decoded = await admin.auth().verifyIdToken(token);
+
+//     const user = await usersCollection.findOne({
+//       email: decoded.email,
+//     });
+
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     req.user = user;
+//     req.email = user.email;
+//    // req.role = user.role;
+
+//     next();
+//   } catch (error) {
+//     return res.status(403).json({
+//       message: "Unauthorized",
+//       error: error.message,
+//     });
+//   }
+// };
+
+//module.exports = verifyFBToken;
+
+// const verifyFBToken = async (req, res, next) => {
+//   const authHeader = req.headers.authorization;
+  
+//   if (!authHeader || !authHeader.startsWith("Bearer ")) {
+//     return res.status(401).json({ success: false, message: "No token provided" });
+//   }
+  
+//   const token = authHeader.split(" ")[1];
+//   try {
+//     const decoded = await admin.auth().verifyIdToken(token);
+//     req.user = decoded;
+//     req.email = decoded.email;
+//     next();
+//   } catch (error) {
+//     console.error("Token verification failed:", error.message);
+//     return res.status(403).json({ success: false, message: "Invalid or expired token" });
+//   }
+// };
+
+// middleware/verifyFBToken.js
 const verifyFBToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
+
+  
+
   if (!authHeader) {
-    return res.status(401).json({ message: "No token" });
+    return res.status(401).send({ message: "Unauthorized access token" });
   }
 
   if (!authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "give me valid token" });
+    return res.status(401).send({ message: "Invalid token format" });
   }
 
   const token = authHeader.split(" ")[1];
-
+  
   try {
     const decoded = await admin.auth().verifyIdToken(token);
-    
-    req.user = decoded; 
-    req.email = decoded.email;
    
-   
+    req.user = decoded;
+    req.email = decoded.email;  
     
     next();
   } catch (error) {
-  
-    return res.status(403).json({ message: "invalid", error: error.message });
+    //console.log("❌ VERIFY ERROR:", error.message);
+    return res.status(403).send({ message: "Forbidden access" });
   }
 };
-
-module.exports = verifyFBToken;
 
 // ================= MONGODB =================
 
@@ -209,7 +300,8 @@ app.get(
   }
 );
 app.patch(
-  "/return-asset/:id",
+  "/return-asset/:id", 
+  verifyFBToken,
 
   async (req, res) => {
 
@@ -288,7 +380,9 @@ app.patch(
     res.send(result);
   }
 );
-app.post("/employee-requests", verifyFBToken, async (req, res) => {
+app.post("/employee-requests", 
+  verifyFBToken, 
+  async (req, res) => {
   try {
     const request = req.body;
 
@@ -305,7 +399,9 @@ app.post("/employee-requests", verifyFBToken, async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 });
-app.get("/employee-requests", verifyFBToken, verifyHR, async (req, res) => {
+app.get("/employee-requests", 
+  verifyFBToken, 
+  verifyHR, async (req, res) => {
   try {
     const companyId = req.query.companyId;
 
@@ -373,7 +469,9 @@ app.patch(
     }
   }
 );
-app.patch("/employee-requests/:id/reject", verifyFBToken, verifyHR, async (req, res) => {
+app.patch("/employee-requests/:id/reject", 
+  verifyFBToken,
+   verifyHR, async (req, res) => {
   try {
     await employeeRequestsCollection.updateOne(
       { _id: new ObjectId(req.params.id) },
@@ -389,7 +487,7 @@ app.patch("/employee-requests/:id/reject", verifyFBToken, verifyHR, async (req, 
     // =========================================================
 //profile
 
-app.get("/users/profile", verifyFBToken, async (req, res) => {
+app.get("/users/profile",  async (req, res) => {
   try {
     const email = req.email;
 
@@ -412,7 +510,9 @@ app.get("/users/profile", verifyFBToken, async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 });
-app.patch("/users/profile", verifyFBToken, async (req, res) => {
+app.patch("/users/profile", 
+  verifyFBToken,
+   async (req, res) => {
   try {
     const email = req.email;
 
@@ -447,7 +547,7 @@ app.patch("/users/profile", verifyFBToken, async (req, res) => {
     
 
 
-app.post("/users", verifyFBToken, async (req, res) => {
+app.post("/users", async (req, res) => {
   try {
     const user = req.body;
 
@@ -490,7 +590,9 @@ app.post("/users", verifyFBToken, async (req, res) => {
   }
 });
 
-    app.get("/users/:email/role", async (req, res) => {
+    app.get("/users/:email/role",  
+    verifyFBToken,
+     async (req, res) => {
       try {
         const email = req.params.email;
 
@@ -506,7 +608,7 @@ app.post("/users", verifyFBToken, async (req, res) => {
       }
     });
 
-    app.get("/users", verifyFBToken, verifyHR, async (req, res) => {
+    app.get("/users", verifyFBToken, async (req, res) => {
       try {
         const search = req.query.search || "";
 
@@ -540,7 +642,9 @@ app.post("/users", verifyFBToken, async (req, res) => {
     });
 
 
-    app.patch("/users/:id", verifyFBToken, verifyHR, async (req, res) => {
+    app.patch("/users/:id", 
+    verifyFBToken,
+     verifyHR, async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -557,7 +661,9 @@ app.post("/users", verifyFBToken, async (req, res) => {
   }
 });
 
-    app.delete("/users/:id", verifyFBToken, verifyHR, async (req, res) => {
+    app.delete("/users/:id", 
+    verifyFBToken,
+     verifyHR, async (req, res) => {
       try {
         const id = req.params.id;
 
@@ -576,7 +682,9 @@ app.post("/users", verifyFBToken, async (req, res) => {
       // =========================================================
     // Employees API
 
-app.get("/employees", verifyFBToken, async (req, res) => {
+app.get("/employees", 
+verifyFBToken, 
+async (req, res) => {
   try {
 
     const hrEmail = req.email;
@@ -604,7 +712,9 @@ app.get("/employees", verifyFBToken, async (req, res) => {
     });
   }
 });
-app.patch("/employees/:id",verifyFBToken, verifyHR, async (req, res) => {
+app.patch("/employees/:id",
+verifyFBToken,
+ verifyHR, async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -861,7 +971,9 @@ app.get(
     // =========================================================
 
 
-app.get("/assets", verifyFBToken, async (req, res) => {
+app.get("/assets", 
+verifyFBToken,
+ async (req, res) => {
   try {
 
     const {
@@ -1112,7 +1224,9 @@ app.post(
     // =========================================================
 
 
-app.post("/requests", verifyFBToken, async (req, res) => {
+app.post("/requests",
+ verifyFBToken,
+  async (req, res) => {
   try {
 
 
@@ -1159,7 +1273,9 @@ app.post("/requests", verifyFBToken, async (req, res) => {
 // =========================================================
 
 
-app.get("/requests",verifyFBToken, async (req, res) => {
+app.get("/requests",
+verifyFBToken,
+ async (req, res) => {
   try {
     const { status, email } = req.query;
 
@@ -1354,7 +1470,9 @@ app.patch(
 );
 
 
-app.get("/assigned-assets",verifyFBToken,  async (req, res) => {
+app.get("/assigned-assets",
+verifyFBToken,
+  async (req, res) => {
   try {
     const email = req.email;
 
@@ -1469,7 +1587,9 @@ app.post("/assign-direct", verifyFBToken, async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 });
-app.post("/asset-request", verifyFBToken, async (req, res) => {
+app.post("/asset-request", 
+verifyFBToken, 
+async (req, res) => {
   try {
     const { assetId } = req.body;
     //const email = req.user.email;
@@ -1487,7 +1607,9 @@ app.post("/asset-request", verifyFBToken, async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 });
-app.patch("/asset-request/approve/:id", verifyFBToken,verifyHR, async (req, res) => {
+app.patch("/asset-request/approve/:id", 
+verifyFBToken,
+verifyHR, async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -1593,7 +1715,9 @@ app.patch("/asset-request/approve/:id", verifyFBToken,verifyHR, async (req, res)
     });
 
 
-app.post("/packages", verifyFBToken, verifyHR, async (req, res) => {
+app.post("/packages", 
+verifyFBToken,
+ verifyHR, async (req, res) => {
   try {
     const packageData = req.body;
 
@@ -1642,7 +1766,9 @@ app.post("/packages", verifyFBToken, verifyHR, async (req, res) => {
   }
 });
 
-app.patch("/packages/:id", verifyFBToken, verifyHR, async (req, res) => {
+app.patch("/packages/:id", 
+verifyFBToken, 
+verifyHR, async (req, res) => {
   try {
     const id = req.params.id;
     const data = req.body;
@@ -1798,7 +1924,9 @@ app.patch("/payment-success", async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 });
-    app.post("/payments", verifyFBToken, async (req, res) => {
+    app.post("/payments", 
+    verifyFBToken,
+     async (req, res) => {
       try {
         const payment = req.body;
 
@@ -1832,7 +1960,9 @@ app.patch("/payment-success", async (req, res) => {
     });
 
  
-    app.get("/payments", verifyFBToken, async (req, res) => {
+    app.get("/payments", 
+    verifyFBToken,
+     async (req, res) => {
   try {
    
 
@@ -1852,7 +1982,9 @@ app.patch("/payment-success", async (req, res) => {
 // ================= GET MY AFFILIATED COMPANIES =================
 
 
-app.get("/my-companies", verifyFBToken, async (req, res) => {
+app.get("/my-companies", 
+verifyFBToken,
+ async (req, res) => {
   try {
     const result = await employeeAffiliationsCollection
       .find({
@@ -1868,7 +2000,9 @@ app.get("/my-companies", verifyFBToken, async (req, res) => {
 
 // ================= TEAM MEMBERS =================
 
-app.get("/team-members", verifyFBToken, async (req, res) => {
+app.get("/team-members", 
+verifyFBToken,
+ async (req, res) => {
   try {
     const { companyName } = req.query;
 
@@ -1916,7 +2050,9 @@ app.get("/team-members", verifyFBToken, async (req, res) => {
 // ================= UPCOMING BIRTHDAYS (CURRENT MONTH) =================
 
 
-app.get("/upcoming-birthdays", verifyFBToken, async (req, res) => {
+app.get("/upcoming-birthdays", 
+verifyFBToken,
+ async (req, res) => {
   try {
     const { companyName } = req.query;
 
@@ -1996,7 +2132,9 @@ app.get(
 
 // hr dashboard
 
-app.get("/dashboard/stats", verifyFBToken, verifyHR, async (req, res) => {
+app.get("/dashboard/stats", 
+verifyFBToken, 
+verifyHR, async (req, res) => {
   try {
     const hrEmail = req.email;
 

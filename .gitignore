@@ -29,3 +29,5 @@ Thumbs.db
 # build output (if any)
 dist/
 build/
+.vercel
+.env*
