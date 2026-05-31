@@ -10,9 +10,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET);
 const crypto = require("crypto");
 const admin = require("firebase-admin");
 
-//const serviceAccount = require("./asset-management-adminsdk.json");
 
-// const serviceAccount = require("./firebase-admin-key.json");
 const decoded = Buffer.from(process.env.FB_SERVICE_KEY, 'base64').toString('utf8')
 const serviceAccount = JSON.parse(decoded);
 

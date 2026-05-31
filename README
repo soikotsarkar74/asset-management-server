@@ -1,0 +1,113 @@
+# AssetVerse
+
+**Corporate Asset Management System (B2B HR & Employee Platform)**
+
+---
+
+## 🚀 Overview
+
+AssetVerse is a full-stack HR & asset management system that helps companies track, assign, and manage physical assets (laptops, chairs, keyboards, etc.) across employees with role-based access and subscription limits.
+
+---
+
+## 🌐 Live URL
+
+[https://your-live-site-url.com](https://your-live-site-url.com)
+
+---
+
+## 🎯 Key Features
+
+### 👨‍💼 HR (Admin)
+
+* Company registration & subscription packages
+* Add / edit / delete assets
+* Approve or reject asset requests
+* Manage employees & affiliations
+* Stripe-based package upgrade
+* Dashboard analytics (charts)
+
+### 👨‍💻 Employee
+
+* Multi-company affiliation support
+* Request assets from multiple companies
+* View assigned assets
+* Return returnable assets
+* Profile management
+
+### 🔐 Authentication
+
+* JWT authentication
+* Role-based access (HR / Employee)
+* Protected routes
+* Persistent login on refresh
+
+---
+
+## 📦 Core Modules
+
+* Asset management (CRUD)
+* Request & approval workflow
+* Employee affiliation system
+* Subscription package system
+* Payment integration (Stripe)
+
+---
+
+## 🛠 Tech Stack
+
+**Frontend:** React, Tailwind CSS, DaisyUI, React Query, Recharts, Axios
+
+**Backend:** Node.js, Express.js, MongoDB, JWT, Stripe, CORS, dotenv
+
+---
+
+## 🗄 Database Collections
+
+* users
+* assets
+* requests
+* assignedAssets
+* employeeAffiliations
+* packages
+* payments
+
+---
+
+## ⚙ Environment Variables
+
+**Client:**
+
+```
+VITE_API_URL=your_backend_url
+VITE_FIREBASE_API_KEY=your_key
+```
+
+**Server:**
+
+```
+PORT=5000
+MONGODB_URI=your_mongo_uri
+JWT_SECRET=your_secret
+STRIPE_SECRET_KEY=your_key
+```
+
+---
+
+## 🧪 Test Credentials
+
+* HR Email: [hr@testcompany.com](mailto:hr@testcompany.com)
+* Password: your_secure_password_here
+
+---
+
+## 📌 Project Flow
+
+HR → Add Assets → Approve Requests → Manage Employees → Upgrade Package
+
+Employee → Register → Request Asset → Get Approved → View Assets
+
+---
+
+## 👨‍💻 Author
+

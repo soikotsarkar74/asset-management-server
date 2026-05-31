@@ -1,6 +1,11 @@
 node_modules
 .env
 asset-management-adminsdk.json.json
+
+
+//const serviceAccount = require("./asset-management-adminsdk.json");
+
+// const serviceAccount = require("./firebase-admin-key.json");
 # dependencies
 node_modules/
 
