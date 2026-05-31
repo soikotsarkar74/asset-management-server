@@ -1,0 +1,183 @@
+[
+  {
+    "id": 1,
+    "name": "Rahim Uddin",
+    "role": "Operations Manager",
+    "company": "TechNova Ltd",
+    "rating": 5,
+    "comment": "AssetVerse completely transformed how we track company assets. The dashboard is clean, fast, and very reliable.",
+    "image": "https://i.ibb.co/2kRZJ9S/user1.png"
+  },
+  {
+    "id": 2,
+    "name": "Nusrat Jahan",
+    "role": "HR Executive",
+    "company": "Bright Solutions",
+    "rating": 4.8,
+    "comment": "Managing employee assets is now effortless. AssetVerse saved us a lot of manual work.",
+    "image": "https://i.ibb.co/7rQpKpZ/user2.png"
+  },
+  {
+    "id": 3,
+    "name": "Imran Hossain",
+    "role": "IT Administrator",
+    "company": "CloudByte",
+    "rating": 5,
+    "comment": "Live tracking and real-time updates are extremely accurate. Highly recommended!",
+    "image": "https://i.ibb.co/6ZpD9sM/user3.png"
+  },
+  {
+    "id": 4,
+    "name": "Sarah Ahmed",
+    "role": "Finance Manager",
+    "company": "NextGen Corp",
+    "rating": 4.9,
+    "comment": "AssetVerse helped us reduce asset loss and improve accountability across teams.",
+    "image": "https://i.ibb.co/QH4Yq3c/user4.png"
+  },
+  {
+    "id": 5,
+    "name": "Tanvir Hasan",
+    "role": "Project Lead",
+    "company": "SoftCraft",
+    "rating": 5,
+    "comment": "The reporting feature is powerful and easy to understand. Excellent experience.",
+    "image": "https://i.ibb.co/9h0Zc7z/user5.png"
+  },
+  {
+    "id": 6,
+    "name": "Ayesha Rahman",
+    "role": "Admin Officer",
+    "company": "Vertex Solutions",
+    "rating": 4.7,
+    "comment": "24/7 support is amazing. The team is always responsive and helpful.",
+    "image": "https://i.ibb.co/kXzN4nZ/user6.png"
+  },
+  {
+    "id": 7,
+    "name": "Mahmudul Islam",
+    "role": "CEO",
+    "company": "BizCore",
+    "rating": 5,
+    "comment": "AssetVerse gives us complete control over our business assets. Truly enterprise-ready.",
+    "image": "https://i.ibb.co/pLkqKqH/user7.png"
+  },
+  {
+    "id": 8,
+    "name": "Farzana Akter",
+    "role": "Procurement Manager",
+    "company": "Prime Holdings",
+    "rating": 4.8,
+    "comment": "Tracking purchases and allocations has never been this simple.",
+    "image": "https://i.ibb.co/7gzK5Xs/user8.png"
+  },
+  {
+    "id": 9,
+    "name": "Rafiul Karim",
+    "role": "System Analyst",
+    "company": "DataEdge",
+    "rating": 5,
+    "comment": "Secure, fast, and scalable. AssetVerse fits perfectly into our workflow.",
+    "image": "https://i.ibb.co/5Yb9w7F/user9.png"
+  },
+  {
+    "id": 10,
+    "name": "Shakila Sultana",
+    "role": "Office Manager",
+    "company": "Urban Tech",
+    "rating": 4.6,
+    "comment": "User-friendly UI and excellent performance. Our staff loves it.",
+    "image": "https://i.ibb.co/YkQ3X7s/user10.png"
+  },
+  {
+    "id": 11,
+    "name": "Hasan Ali",
+    "role": "Inventory Supervisor",
+    "company": "LogiMart",
+    "rating": 4.9,
+    "comment": "Real-time asset status helps us make better decisions quickly.",
+    "image": "https://i.ibb.co/fXK0jF8/user11.png"
+  },
+  {
+    "id": 12,
+    "name": "Nayeem Rahman",
+    "role": "CTO",
+    "company": "InnovateX",
+    "rating": 5,
+    "comment": "Rock-solid security and smooth performance. AssetVerse is production-ready.",
+    "image": "https://i.ibb.co/KVJ5rPp/user12.png"
+  },
+  {
+    "id": 13,
+    "name": "Jannatul Ferdous",
+    "role": "Business Analyst",
+    "company": "Insight Corp",
+    "rating": 4.8,
+    "comment": "The analytics section gives deep insights into asset usage.",
+    "image": "https://i.ibb.co/DWv8jv9/user13.png"
+  },
+  {
+    "id": 14,
+    "name": "Arif Mahmud",
+    "role": "Operations Head",
+    "company": "FastLane",
+    "rating": 5,
+    "comment": "AssetVerse improved transparency across all departments.",
+    "image": "https://i.ibb.co/wM8qYtX/user14.png"
+  },
+  {
+    "id": 15,
+    "name": "Sadia Khan",
+    "role": "HR Manager",
+    "company": "PeopleFirst",
+    "rating": 4.7,
+    "comment": "Employee asset assignment and return tracking is super easy now.",
+    "image": "https://i.ibb.co/5sX9HqT/user15.png"
+  },
+  {
+    "id": 16,
+    "name": "Kamal Hossain",
+    "role": "Founder",
+    "company": "StartupHub",
+    "rating": 5,
+    "comment": "A complete asset management solution for growing businesses.",
+    "image": "https://i.ibb.co/8dZ6nPZ/user16.png"
+  },
+  {
+    "id": 17,
+    "name": "Lubna Yasmin",
+    "role": "Compliance Officer",
+    "company": "SecureOps",
+    "rating": 4.9,
+    "comment": "Helps us stay compliant with proper asset documentation.",
+    "image": "https://i.ibb.co/Yb3Pj7W/user17.png"
+  },
+  {
+    "id": 18,
+    "name": "Saiful Islam",
+    "role": "Warehouse Manager",
+    "company": "StockPro",
+    "rating": 4.8,
+    "comment": "Inventory and asset tracking is now centralized and efficient.",
+    "image": "https://i.ibb.co/WkzVJpC/user18.png"
+  },
+  {
+    "id": 19,
+    "name": "Mithila Roy",
+    "role": "Product Manager",
+    "company": "DesignFlow",
+    "rating": 5,
+    "comment": "Beautiful UI with powerful backend features. Highly impressed.",
+    "image": "https://i.ibb.co/3kH4t6r/user19.png"
+  },
+  {
+    "id": 20,
+    "name": "Shuvo Das",
+    "role": "Technical Lead",
+    "company": "DevSpark",
+    "rating": 4.9,
+    "comment": "AssetVerse integrates smoothly with our existing systems.",
+    "image": "https://i.ibb.co/1rZ4v9Q/user20.png"
+  }
+]
+
