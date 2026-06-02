@@ -5,7 +5,12 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:5000",
+ 
+
+
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true,
+
 });
 
 const useAxiosSecure = () => {
@@ -13,13 +18,13 @@ const useAxiosSecure = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-  
+
     const requestInterceptor = axiosSecure.interceptors.request.use(
       (config) => {
-    
+
         if (user?.accessToken) {
           config.headers.authorization = `Bearer ${user.accessToken}`;
-         
+
         } else {
           console.log("⚠️ টোকেন নেই!");
         }
@@ -34,13 +39,13 @@ const useAxiosSecure = () => {
       (response) => response,
       async (error) => {
         const status = error.response?.status;
-      
+
         if (status === 401 || status === 403) {
           console.log("❌ Token expire");
           await logOut();
           navigate("/login", { replace: true });
         }
-        
+
         return Promise.reject(error);
       }
     );
@@ -50,7 +55,7 @@ const useAxiosSecure = () => {
       axiosSecure.interceptors.request.eject(requestInterceptor);
       axiosSecure.interceptors.response.eject(responseInterceptor);
     };
-  }, [user, logOut, navigate]); 
+  }, [user, logOut, navigate]);
 
   return axiosSecure;
 };

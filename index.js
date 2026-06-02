@@ -25,7 +25,11 @@ admin.initializeApp({
 
 // ================= MIDDLEWARE =================
 
-app.use(cors());
+
+app.use(cors({
+  origin: ["https://asset-management-server-flax.vercel.app"],
+  credentials: true
+}));
 app.use(express.json());
 
 // ================= TRACKING ID =================
@@ -41,99 +45,7 @@ const generateTrackingId = () => {
 // ================= VERIFY TOKEN =================
 
 
-// const verifyFBToken = async (req, res, next) => {
-//   try {
-//     const authHeader = req.headers.authorization;
 
-//     if (!authHeader) {
-//       return res.status(401).json({ message: "No token provided" });
-//     }
-
-//     if (!authHeader.startsWith("Bearer ")) {
-//       return res.status(401).json({ message: "Invalid token format" });
-//     }
-
-//     const token = authHeader.split(" ")[1];
-
-//     const decoded = await admin.auth().verifyIdToken(token);
-
-//     if (!decoded?.email) {
-//       return res.status(403).json({ message: "Invalid token payload" });
-//     }
-
-//     req.user = decoded;
-//     req.email = decoded.email;
-
-//     next();
-//   } catch (error) {
-//     console.error("Firebase auth error:", error.message);
-
-//     return res.status(403).json({
-//       message: "Unauthorized / Invalid token",
-//       error: error.message,
-//     });
-//   }
-// };
-
-// const verifyFBToken = async (req, res, next) => {
-//   try {
-//     const authHeader = req.headers.authorization;
-
-//     if (!authHeader) {
-//       return res.status(401).json({ message: "No token provided" });
-//     }
-
-//     if (!authHeader.startsWith("Bearer ")) {
-//       return res.status(401).json({ message: "Invalid token format" });
-//     }
-
-//     const token = authHeader.split(" ")[1];
-
-//     const decoded = await admin.auth().verifyIdToken(token);
-
-//     const user = await usersCollection.findOne({
-//       email: decoded.email,
-//     });
-
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     req.user = user;
-//     req.email = user.email;
-//    // req.role = user.role;
-
-//     next();
-//   } catch (error) {
-//     return res.status(403).json({
-//       message: "Unauthorized",
-//       error: error.message,
-//     });
-//   }
-// };
-
-//module.exports = verifyFBToken;
-
-// const verifyFBToken = async (req, res, next) => {
-//   const authHeader = req.headers.authorization;
-  
-//   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-//     return res.status(401).json({ success: false, message: "No token provided" });
-//   }
-  
-//   const token = authHeader.split(" ")[1];
-//   try {
-//     const decoded = await admin.auth().verifyIdToken(token);
-//     req.user = decoded;
-//     req.email = decoded.email;
-//     next();
-//   } catch (error) {
-//     console.error("Token verification failed:", error.message);
-//     return res.status(403).json({ success: false, message: "Invalid or expired token" });
-//   }
-// };
-
-// middleware/verifyFBToken.js
 const verifyFBToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -157,7 +69,7 @@ const verifyFBToken = async (req, res, next) => {
     
     next();
   } catch (error) {
-    //console.log("❌ VERIFY ERROR:", error.message);
+    
     return res.status(403).send({ message: "Forbidden access" });
   }
 };
@@ -1851,7 +1763,7 @@ verifyHR, async (req, res) => {
       async (req, res) => {
         try {
           const { packageName, price, employeeLimit, hrEmail } = req.body;
-          const clientURL = process.env.CLIENT_URL || "http://localhost:5173";
+          const clientURL = process.env.CLIENT_URL || "asset-management-server-flax.vercel.app";
 
           const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
@@ -1870,10 +1782,10 @@ verifyHR, async (req, res) => {
               },
             ],
 
-            success_url: `${clientURL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${clientURL}/payment-cancel`,
-            // success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-            // cancel_url: `${process.env.CLIENT_URL}/payment-cancel`,
+            // success_url: `${clientURL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+            // cancel_url: `${clientURL}/payment-cancel`,
+            success_url: `${process.env.CLIENT_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.CLIENT_URL}/payment-cancel`,
 
             metadata: {
               packageName,
@@ -2193,6 +2105,7 @@ verifyHR, async (req, res) => {
   } finally {
   }
 }
+
 
 run().catch(console.dir);
 
