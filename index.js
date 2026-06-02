@@ -27,7 +27,7 @@ admin.initializeApp({
 
 
 app.use(cors({
-  origin: ["https://asset-management-server-flax.vercel.app"],
+  origin: ["asset-management-server-soikotsarkar74-2934-soikotsarkar74-2934.vercel.app"],
   credentials: true
 }));
 app.use(express.json());
