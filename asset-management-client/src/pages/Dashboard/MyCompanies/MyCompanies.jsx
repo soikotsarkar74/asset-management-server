@@ -4,20 +4,33 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 const MyCompanies = () => {
   const axiosSecure = useAxiosSecure();
 
-  // ================= FETCH COMPANIES =================
-  const {
-    data: companies = [],
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["my-companies"],
-    queryFn: async () => {
-      const res = await axiosSecure.get("/my-companies");
-      return res.data;
-    },
-  });
+const {
+  data: companies = [],
+  isLoading,
+  isError,
+  error,
+  refetch,
+} = useQuery({
+  queryKey: ["my-companies"],
+
+  // queryFn: async () => {
+  //   const res = await axiosSecure.get("/my-companies");
+
+  //   const data = res.data;
+
+  //   return Array.isArray(data)
+  //     ? data
+  //     : Array.isArray(data?.data)
+  //     ? data.data
+  //     : [];
+  // },
+queryFn: async () => {
+  const res = await axiosSecure.get("/my-companies");
+  console.log("MY COMPANIES RESPONSE:", res.data);
+  return res.data || [];
+},
+
+});
 
   // ================= LOADING STATE =================
   if (isLoading) {
@@ -33,7 +46,7 @@ const MyCompanies = () => {
     return (
       <div className="text-center py-10">
         <h2 className="text-xl font-semibold text-red-500">
-          Failed to load companies ❌
+          Failed to load companies 
         </h2>
 
         <p className="text-gray-500 mt-2">

@@ -3,8 +3,9 @@ import { auth } from "../firebase/firebase.init";
 
 const axiosSecure = axios.create({
   // baseURL: 'asset-management-server-flax.vercel.app',
-   baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
+   //baseURL: import.meta.env.VITE_API_URL,
+   http:'//localhost:5000',
+  //withCredentials: true,
 });
 
 axiosSecure.interceptors.request.use(async (config) => {

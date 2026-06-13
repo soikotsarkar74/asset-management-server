@@ -338,8 +338,6 @@
 
 // export default AuthProvider;
 
-
-// contexts/AuthProvider.jsx
 import React, { useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import {

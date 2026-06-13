@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { FaUser, FaEnvelope, FaImage, FaBriefcase, FaPhone, FaVenusMars } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaImage, FaBriefcase, FaPhone, FaVenusMars, FaBuilding } from "react-icons/fa";
 import toast from "react-hot-toast";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 
@@ -20,6 +20,7 @@ const RegisterEmployee = () => {
         designation: data.designation,
         phone: data.phone,
         gender: data.gender,
+        companyName: data.companyName,  
         role: "employee",
         createdAt: new Date()
       };
@@ -138,6 +139,23 @@ const RegisterEmployee = () => {
               </select>
             </div>
             {errors.gender && <p className="text-red-500 text-sm">Gender is required</p>}
+          </div>
+
+          {/* Company Name ✅ NEW */}
+          <div>
+            <label className="block mb-1 font-medium">Company Name</label>
+            <div className="flex items-center border rounded-lg px-3">
+              <FaBuilding className="text-gray-400 mr-2" />
+              <input
+                type="text"
+                placeholder="Enter company name"
+                className="w-full p-2 outline-none"
+                {...register("companyName", { required: true })}
+              />
+            </div>
+            {errors.companyName && (
+              <p className="text-red-500 text-sm">Company name is required</p>
+            )}
           </div>
 
           {/* Submit */}

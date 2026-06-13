@@ -24,7 +24,6 @@ const AssetsList = () => {
     queryFn: async () => {
       const res = await axiosSecure.get("/assets");
 
-      // backend response: { success, data }
       return res.data.data || [];
     },
   });

@@ -1,0 +1,17 @@
+
+import { useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "./useAxiosSecure";
+
+const useAssignedAssets = () => {
+  const axiosSecure = useAxiosSecure();
+
+  return useQuery({
+    queryKey: ["assigned-assets"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/my-assets");
+      return res.data || [];
+    },
+  });
+};
+
+export default useAssignedAssets;

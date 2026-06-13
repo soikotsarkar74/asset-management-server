@@ -19,10 +19,9 @@ const DashboardLayout = () => {
 
   const normalizedRole = (role || "").toLowerCase();
 
-  const isHR = ["hr", "admin"].includes(normalizedRole);
+  const isHR = normalizedRole === "hr" || normalizedRole === "admin";
   const isEmployee = normalizedRole === "employee";
 
-  // ================= LOGOUT =================
   const handleLogout = async () => {
     try {
       await logOut();
@@ -31,10 +30,13 @@ const DashboardLayout = () => {
     }
   };
 
-  // ================= NAV STYLE =================
   const navClass = ({ isActive }) =>
-    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium
-    ${isActive ? "bg-primary text-white" : "hover:bg-base-300 text-base-content"}`;
+    `flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium
+    ${
+      isActive
+        ? "bg-primary text-white"
+        : "hover:bg-base-300 text-base-content"
+    }`;
 
   if (roleLoading) {
     return (
@@ -54,7 +56,7 @@ const DashboardLayout = () => {
       {/* ================= MAIN CONTENT ================= */}
       <div className="drawer-content flex flex-col">
 
-        {/* TOP NAVBAR */}
+        {/* TOP BAR */}
         <div className="navbar bg-base-200 border-b px-4 md:px-6">
 
           <div className="flex-1">
@@ -104,7 +106,7 @@ const DashboardLayout = () => {
               </NavLink>
             </li>
 
-            {/* ================= HR MENU ================= */}
+            {/* ================= HR ================= */}
             {isHR && (
               <>
                 <div className="divider">HR PANEL</div>
@@ -117,7 +119,7 @@ const DashboardLayout = () => {
 
                 <li>
                   <NavLink to="/dashboard/assets-list" className={navClass}>
-                    <FaBox /> Asset List
+                    <FaBox /> Assets
                   </NavLink>
                 </li>
 
@@ -129,31 +131,30 @@ const DashboardLayout = () => {
 
                 <li>
                   <NavLink to="/dashboard/all-requests" className={navClass}>
-                    <FaClipboardList /> All Requests
-                  </NavLink>
-                </li>
-
-                <li>
-                  <NavLink to="/dashboard/employee-list" className={navClass}>
-                    <FaUsers /> Employee List
+                    <FaClipboardList /> Requests
                   </NavLink>
                 </li>
 
                 <li>
                   <NavLink to="/dashboard/employee-management" className={navClass}>
-                    <FaUsers /> Employee Management
+                    <FaUsers /> Employees management
+                  </NavLink>
+                </li>
+                  <li>
+                  <NavLink to="/dashboard/employee-list" className={navClass}>
+                    <FaUsers /> Employees List
                   </NavLink>
                 </li>
 
                 <li>
                   <NavLink to="/dashboard/update-package" className={navClass}>
-                    <FaMoneyBill /> Upgrade Package
+                    <FaMoneyBill /> Package
                   </NavLink>
                 </li>
               </>
             )}
 
-            {/* ================= EMPLOYEE MENU ================= */}
+            {/* ================= EMPLOYEE ================= */}
             {isEmployee && (
               <>
                 <div className="divider">EMPLOYEE PANEL</div>
@@ -169,7 +170,14 @@ const DashboardLayout = () => {
                     <FaBox /> My Assets
                   </NavLink>
                 </li>
-
+          
+                <li>
+                  <NavLink to="/register-employee" className={navClass}>
+                    <FaBox /> Register Employee
+                  </NavLink>
+                </li>
+                 
+             
                 <li>
                   <NavLink to="/dashboard/request-asset" className={navClass}>
                     <FaPlus /> Request Asset
@@ -184,7 +192,7 @@ const DashboardLayout = () => {
 
                 <li>
                   <NavLink to="/dashboard/my-companies" className={navClass}>
-                    <FaUsers /> My Companies
+                    <FaUsers /> Companies
                   </NavLink>
                 </li>
               </>

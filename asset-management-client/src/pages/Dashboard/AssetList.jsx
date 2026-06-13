@@ -1,57 +1,57 @@
-// import React, { useEffect, useState } from "react";
-// import axiosInstance from "../../hooks/axiosInstance";
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../../hooks/axiosInstance";
 
-// const AssetList = () => {
-//   const [assets, setAssets] = useState([]);
+const AssetList = () => {
+  const [assets, setAssets] = useState([]);
 
-//   useEffect(() => {
-//     axiosInstance
-//       .get("/assets")
-//       .then((res) => {
-//         console.log(res.data); 
-//         setAssets(res.data);
-//       })
-//       .catch((err) => console.log(err));
-//   }, []);
+  useEffect(() => {
+    axiosInstance
+      .get("/assets")
+      .then((res) => {
+        console.log(res.data); 
+        setAssets(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
-//   return (
-//     <div className="p-6">
-//       <h1 className="text-3xl font-bold mb-6">All Assets</h1>
+  return (
+    <div className="p-6">
+      <h1 className="text-3xl font-bold mb-6">All Assets</h1>
 
-//       <div className="overflow-x-auto">
-//         <table className="table table-zebra w-full">
-//           <thead>
-//             <tr>
-//               <th>Product Name</th>
-//               <th>HR Email</th>
-//               <th>Product Type</th>
-//               <th>Quantity</th>
-//               <th>Available Quantity</th>
-//               <th>Price</th>
-//               <th>Total Price</th>
-//             </tr>
-//           </thead>
+      <div className="overflow-x-auto">
+        <table className="table table-zebra w-full">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>HR Email</th>
+              <th>Product Type</th>
+              <th>Quantity</th>
+              <th>Available Quantity</th>
+              <th>Price</th>
+              <th>Total Price</th>
+            </tr>
+          </thead>
 
-//           <tbody>
-//             {assets.map((asset) => (
-//               <tr key={asset._id}>
-//                 <td>{asset.productName}</td>
-//                 <td>{asset.hrEmail}</td>
-//                 <td>{asset.productType}</td>
-//                 <td>{asset.productQuantity}</td>
-//                 <td>{asset.availableQuantity}</td>
-//                 <td>{asset.price} ৳</td>
-//                 <td>{asset.totalPrice} ৳</td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-//     </div>
-//   );
-// };
+          <tbody>
+            {assets.map((asset) => (
+              <tr key={asset._id}>
+                <td>{asset.productName}</td>
+                <td>{asset.hrEmail}</td>
+                <td>{asset.productType}</td>
+                <td>{asset.productQuantity}</td>
+                <td>{asset.availableQuantity}</td>
+                <td>{asset.price} ৳</td>
+                <td>{asset.totalPrice} ৳</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
 
-// export default AssetList;
+export default AssetList;
 
 
 // import React, { useContext } from "react";

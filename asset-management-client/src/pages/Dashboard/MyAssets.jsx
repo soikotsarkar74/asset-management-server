@@ -1,1342 +1,431 @@
-// import React from "react";
-// import { useQuery } from "@tanstack/react-query";
-// import { useNavigate } from "react-router-dom";
-// import useAuth from "../../hooks/useAuth";
-// import useAxiosSecure from "../../hooks/useAxiosSecure";
 
-// const MyAssets = () => {
-//   const { user } = useAuth();
-//   const axiosSecure = useAxiosSecure();
-//   const navigate = useNavigate();
-
-//   // 🔥 Fetch assets
-//   const {
-//     data: assets = [],
-//     isLoading,
-//     isError,
-//     refetch,
-//   } = useQuery({
-//     queryKey: ["my-assets", user?.email],
-//     enabled: !!user?.email,
-//     queryFn: async () => {
-//       if (!user?.email) return [];
-
-//       const res = await axiosSecure.get(
-//         `/assets?email=${user.email}`
-//       );
-
-//       return res.data;
-//     },
-//     onError: (error) => {
-//       console.log(
-//         "❌ ASSETS ERROR:",
-//         error.response?.data || error.message
-//       );
-//     },
-//   });
-
-//   // 💳 Payment handler
-//   const handleStatusClick = (asset) => {
-//     if (asset?.paymentStatus !== "paid") {
-//       navigate(`/dashboard/payment/${asset._id}`, {
-//         state: {
-//           assetName: asset.assetName,
-//           price: asset.price,
-//         },
-//       });
-//     }
-//   };
-
-//   // 💰 Format price
-//   const formatPrice = (price) =>
-//     price !== undefined
-//       ? new Intl.NumberFormat("en-US", {
-//           style: "currency",
-//           currency: "USD",
-//         }).format(price)
-//       : "—";
-
-//   // ⏳ Loading
-//   if (isLoading) {
-//     return (
-//       <div className="flex justify-center items-center min-h-[60vh]">
-//         <span className="loading loading-spinner loading-lg"></span>
-//       </div>
-//     );
-//   }
-
-//   // ❌ Error
-//   if (isError) {
-//     return (
-//       <div className="text-center text-red-500 mt-10">
-//         Failed to load assets
-//         <div className="mt-3">
-//           <button
-//             onClick={() => refetch()}
-//             className="btn btn-sm btn-outline"
-//           >
-//             Retry
-//           </button>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="p-4 md:p-6 lg:p-8">
-//       {/* Header */}
-//       <div className="flex justify-between items-center mb-6">
-//         <h2 className="text-2xl md:text-3xl font-bold">
-//           📦 My Assets
-//         </h2>
-//         <p className="text-gray-600">
-//           Total:{" "}
-//           <span className="font-semibold">{assets.length}</span>
-//         </p>
-//       </div>
-
-//       {/* Empty */}
-//       {assets.length === 0 ? (
-//         <div className="text-center py-10 border rounded-lg bg-gray-50">
-//           <p className="text-gray-500">No assets found</p>
-//         </div>
-//       ) : (
-//         <div className="overflow-x-auto rounded-xl border bg-white shadow-sm">
-//           <table className="table table-zebra">
-//             <thead className="bg-base-200">
-//               <tr>
-//                 <th>#</th>
-//                 <th>Asset</th>
-//                 <th>Price</th>
-//                 <th>Payment</th>
-//                 <th>Tracking ID</th>
-//                 <th>Delivery</th>
-//                 <th>Date</th>
-//                 <th>Actions</th>
-//               </tr>
-//             </thead>
-
-//             <tbody>
-//               {assets.map((asset, index) => (
-//                 <tr key={asset._id}>
-//                   <th>{index + 1}</th>
-
-//                   {/* Asset */}
-//                   <td>
-//                     <div className="flex items-center gap-3">
-//                       <div className="avatar">
-//                         <div className="w-10 rounded-full">
-//                           <img
-//                             src={
-//                               asset.image ||
-//                               "https://i.ibb.co/4pDNDk1/avatar.png"
-//                             }
-//                             alt="asset"
-//                           />
-//                         </div>
-//                       </div>
-//                       <div>
-//                         <div className="font-semibold">
-//                           {asset.assetName || "Untitled"}
-//                         </div>
-//                         <div className="text-xs text-gray-400">
-//                           {asset.assetType || "No type"}
-//                         </div>
-//                       </div>
-//                     </div>
-//                   </td>
-
-//                   {/* Price */}
-//                   <td className="text-green-600 font-medium">
-//                     {formatPrice(asset.price)}
-//                   </td>
-
-//                   {/* Payment */}
-//                   <td>
-//                     <span
-//                       className={`badge ${
-//                         asset.paymentStatus === "paid"
-//                           ? "badge-success"
-//                           : "badge-error"
-//                       }`}
-//                     >
-//                       {asset.paymentStatus || "unpaid"}
-//                     </span>
-//                   </td>
-
-//                   {/* Tracking */}
-//                   <td className="text-sm text-gray-500">
-//                     {asset.trackingId || "N/A"}
-//                   </td>
-
-//                   {/* Delivery */}
-//                   <td>
-//                     <span
-//                       className={`badge ${
-//                         asset.deliveryStatus === "delivered"
-//                           ? "badge-success"
-//                           : asset.deliveryStatus === "shipped"
-//                           ? "badge-info"
-//                           : asset.deliveryStatus ===
-//                             "pending-pickup"
-//                           ? "badge-warning"
-//                           : asset.deliveryStatus === "assigned"
-//                           ? "badge-primary"
-//                           : "badge-ghost"
-//                       }`}
-//                     >
-//                       {asset.deliveryStatus || "pending"}
-//                     </span>
-//                   </td>
-
-//                   {/* Date */}
-//                   <td className="text-sm text-gray-400">
-//                     {asset.createdAt
-//                       ? new Date(
-//                           asset.createdAt
-//                         ).toLocaleDateString()
-//                       : "—"}
-//                   </td>
-
-//                   {/* Actions */}
-//                   <td className="flex gap-2">
-//                     {asset.paymentStatus !== "paid" && (
-//                       <button
-//                         onClick={() =>
-//                           handleStatusClick(asset)
-//                         }
-//                         className="btn btn-xs btn-error"
-//                       >
-//                         Pay
-//                       </button>
-//                     )}
-
-//                     <button className="btn btn-xs btn-outline btn-info">
-//                       View
-//                     </button>
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-
-//           {/* Refresh */}
-//           <div className="p-4 text-center">
-//             <button
-//               onClick={refetch}
-//               className="btn btn-sm btn-outline"
-//             >
-//               Refresh Data
-//             </button>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default MyAssets;
-
-
-// import React from "react";
-// import { useQuery } from "@tanstack/react-query";
-// import { useNavigate } from "react-router-dom";
-// import useAuth from "../../hooks/useAuth";
-// import useAxiosSecure from "../../hooks/useAxiosSecure";
-
-// const MyAssets = () => {
-//   const { user } = useAuth();
-//   const axiosSecure = useAxiosSecure();
-//   const navigate = useNavigate();
-
-//   // 🔥 Fetch assets safely
-//   const {
-//     data: assets = [],
-//     isLoading,
-//     isError,
-//     refetch,
-//   } = useQuery({
-//     queryKey: ["my-assets", user?.email],
-//     enabled: !!user?.email,
-
-//     queryFn: async () => {
-//       // const res = await axiosSecure.get(
-//       //   `/assets?email=${user.email}`
-//       // );
-//      const res = await axiosSecure.get(`/assigned-assets?email=${user.email}`)
-
-//       // ✅ FIX: ensure array always
-//       const data = res.data;
-
-//       if (Array.isArray(data)) return data;
-//       if (Array.isArray(data?.data)) return data.data;
-//       if (Array.isArray(data?.assets)) return data.assets;
-
-//       return [];
-//     },
-
-//     onError: (error) => {
-//       console.log("❌ ASSETS ERROR:", error);
-//     },
-//   });
-
-//   // 💳 Payment handler
-//   const handleStatusClick = (asset) => {
-//     if (asset?.paymentStatus !== "paid") {
-//       navigate(`/dashboard/payment/${asset._id}`, {
-//         state: {
-//           assetName: asset.assetName,
-//           price: asset.price,
-//         },
-//       });
-//     }
-//   };
-
-//   // 💰 format price
-//   const formatPrice = (price) =>
-//     price !== undefined && price !== null
-//       ? new Intl.NumberFormat("en-US", {
-//           style: "currency",
-//           currency: "USD",
-//         }).format(price)
-//       : "—";
-
-//   // ⏳ Loading UI
-//   if (isLoading) {
-//     return (
-//       <div className="flex justify-center items-center min-h-[60vh]">
-//         <span className="loading loading-spinner loading-lg"></span>
-//       </div>
-//     );
-//   }
-
-//   // ❌ Error UI
-//   if (isError) {
-//     return (
-//       <div className="text-center text-red-500 mt-10">
-//         Failed to load assets
-//         <div className="mt-3">
-//           <button
-//             onClick={() => refetch()}
-//             className="btn btn-sm btn-outline"
-//           >
-//             Retry
-//           </button>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="p-4 md:p-6 lg:p-8">
-
-//       {/* Header */}
-//       <div className="flex justify-between items-center mb-6">
-//         <h2 className="text-2xl md:text-3xl font-bold">
-//           📦 My Assets
-//         </h2>
-//         <p className="text-gray-600">
-//           Total: <span className="font-semibold">{assets.length}</span>
-//         </p>
-//       </div>
-
-//       {/* Empty State */}
-//       {assets.length === 0 ? (
-//         <div className="text-center py-10 border rounded-lg bg-gray-50">
-//           <p className="text-gray-500">No assets found</p>
-//         </div>
-//       ) : (
-//         <div className="overflow-x-auto rounded-xl border bg-white shadow-sm">
-//           <table className="table table-zebra">
-
-//             <thead className="bg-base-200">
-//               <tr>
-//                 <th>#</th>
-//                 <th>Asset</th>
-//                 <th>Price</th>
-//                 <th>Payment</th>
-//                 <th>Tracking</th>
-//                 <th>Delivery</th>
-//                 <th>Date</th>
-//                 <th>Action</th>
-//               </tr>
-//             </thead>
-
-//             <tbody>
-//               {assets.map((asset, index) => (
-//                 <tr key={asset._id || index}>
-
-//                   <th>{index + 1}</th>
-
-//                   {/* Asset */}
-//                   <td>
-//                     <div className="flex items-center gap-3">
-//                       <div className="avatar">
-//                         <div className="w-10 rounded-full">
-//                           <img
-//                             src={
-//                               asset.image ||
-//                               "https://i.ibb.co/4pDNDk1/avatar.png"
-//                             }
-//                             alt="asset"
-//                           />
-//                         </div>
-//                       </div>
-
-//                       <div>
-//                         <div className="font-semibold">
-//                           {asset.assetName || "Untitled"}
-//                         </div>
-//                         <div className="text-xs text-gray-400">
-//                           {asset.assetType || "No type"}
-//                         </div>
-//                       </div>
-//                     </div>
-//                   </td>
-
-//                   {/* Price */}
-//                   <td className="text-green-600 font-medium">
-//                     {formatPrice(asset.price)}
-//                   </td>
-
-//                   {/* Payment */}
-//                   <td>
-//                     <span
-//                       className={`badge ${
-//                         asset.paymentStatus === "paid"
-//                           ? "badge-success"
-//                           : "badge-error"
-//                       }`}
-//                     >
-//                       {asset.paymentStatus || "unpaid"}
-//                     </span>
-//                   </td>
-
-//                   {/* Tracking */}
-//                   <td className="text-sm text-gray-500">
-//                     {asset.trackingId || "N/A"}
-//                   </td>
-
-//                   {/* Delivery */}
-//                   <td>
-//                     <span
-//                       className={`badge ${
-//                         asset.deliveryStatus === "delivered"
-//                           ? "badge-success"
-//                           : asset.deliveryStatus === "shipped"
-//                           ? "badge-info"
-//                           : asset.deliveryStatus === "pending-pickup"
-//                           ? "badge-warning"
-//                           : asset.deliveryStatus === "assigned"
-//                           ? "badge-primary"
-//                           : "badge-ghost"
-//                       }`}
-//                     >
-//                       {asset.deliveryStatus || "pending"}
-//                     </span>
-//                   </td>
-
-//                   {/* Date */}
-//                   <td className="text-sm text-gray-400">
-//                     {asset.createdAt
-//                       ? new Date(asset.createdAt).toLocaleDateString()
-//                       : "—"}
-//                   </td>
-
-//                   {/* Actions */}
-//                   <td className="flex gap-2">
-
-//                     {asset.paymentStatus !== "paid" && (
-//                       <button
-//                         onClick={() => handleStatusClick(asset)}
-//                         className="btn btn-xs btn-error"
-//                       >
-//                         Pay
-//                       </button>
-//                     )}
-
-//                     <button className="btn btn-xs btn-outline btn-info">
-//                       View
-//                     </button>
-
-//                   </td>
-
-//                 </tr>
-//               ))}
-//             </tbody>
-
-//           </table>
-
-//           {/* Refresh */}
-//           <div className="p-4 text-center">
-//             <button
-//               onClick={refetch}
-//               className="btn btn-sm btn-outline"
-//             >
-//               Refresh Data
-//             </button>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default MyAssets;
-
-
-// import React, { useState, useEffect } from "react";
-// import { useQuery } from "@tanstack/react-query";
-// import { useNavigate } from "react-router-dom";
-// import useAuth from "../../hooks/useAuth";
-// import useAxiosSecure from "../../hooks/useAxiosSecure";
-// import ReturnAsset from "./ReturnAsset";
-
-// const MyAssets = () => {
-//   const { user } = useAuth();
-//   const axiosSecure = useAxiosSecure();
-//   const navigate = useNavigate();
-//   const [selectedAsset, setSelectedAsset] = useState(null);
-
-//   useEffect(() => {
-//     if (selectedAsset) {
-//       console.log("selectedAsset FULL:", selectedAsset);
-//     }
-//   }, [selectedAsset]);
-
-//   // ================= FETCH ASSETS =================
-//   const {
-//     data: assets = [],
-//     isLoading,
-//     isError,
-//     refetch,
-//   } = useQuery({
-//     queryKey: ["my-assets", user?.email],
-//     enabled: !!user?.email,
-//     queryFn: async () => {
-
-//        const res = await axiosSecure.get(`/assigned-assets?email=${user.email}`)
-//       return res.data;
-//     },
-//   });
-
-//   // ================= PAYMENT =================
-//   const handlePayment = (asset) => {
-//     navigate(`/dashboard/payment/${asset._id}`, {
-//       state: {
-//         assetName: asset.assetName,
-//         price: asset.price,
-//       },
-//     });
-//   };
-
-//   // ================= FORMAT PRICE =================
-//   const formatPrice = (price) =>
-//     price
-//       ? new Intl.NumberFormat("en-US", {
-//           style: "currency",
-//           currency: "USD",
-//         }).format(price)
-//       : "—";
-
-//   // ================= LOADING =================
-//   if (isLoading) {
-//     return (
-//       <div className="flex justify-center items-center min-h-[60vh]">
-//         <span className="loading loading-spinner loading-lg"></span>
-//       </div>
-//     );
-//   }
-
-//   // ================= ERROR =================
-//   if (isError) {
-//     return (
-//       <div className="text-center text-red-500 mt-10">
-//         Failed to load assets
-//         <br />
-//         <button onClick={refetch} className="btn btn-sm mt-3">
-//           Retry
-//         </button>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="p-4 md:p-6">
-
-//       {/* HEADER */}
-//       <div className="flex justify-between mb-6">
-//         <h2 className="text-2xl font-bold">📦 My Assets</h2>
-//         <p>Total: {assets.length}</p>
-//       </div>
-
-//       {/* EMPTY */}
-//       {assets.length === 0 ? (
-//         <div className="text-center py-10">No assets found</div>
-//       ) : (
-//         <div className="overflow-x-auto border rounded-lg bg-white">
-
-//           <table className="table">
-//             <thead>
-//               <tr>
-//                 <th>#</th>
-//                 <th>Asset</th>
-//                 <th>Price</th>
-//                 <th>Payment</th>
-//                 <th>Delivery</th>
-//                 <th>Actions</th>
-//               </tr>
-//             </thead>
-
-//             <tbody>
-//               {assets.map((asset, index) => (
-//                 <tr key={asset._id}>
-
-//                   <td>{index + 1}</td>
-
-//                   {/* ASSET */}
-//                   <td className="flex items-center gap-2">
-//                     <img
-//                       src={
-//                         asset.image ||
-//                         "https://i.ibb.co/4pDNDk1/avatar.png"
-//                       }
-//                       className="w-8 h-8 rounded-full"
-//                       alt="asset"
-//                     />
-//                     <span>{asset.assetName}</span>
-//                   </td>
-
-//                   {/* PRICE */}
-//                   <td>{formatPrice(asset.price)}</td>
-
-//                   {/* PAYMENT */}
-//                   <td>
-//                     <span
-//                       className={`badge ${
-//                         asset.paymentStatus === "paid"
-//                           ? "badge-success"
-//                           : "badge-error"
-//                       }`}
-//                     >
-//                       {asset.paymentStatus || "unpaid"}
-//                     </span>
-//                   </td>
-
-//                   {/* DELIVERY */}
-//                   <td>
-//                     <span className="badge badge-info">
-//                       {asset.deliveryStatus || "pending"}
-//                     </span>
-//                   </td>
-
-//                   {/* ACTIONS */}
-//                   <td className="flex gap-2">
-
-//                     {asset.paymentStatus !== "paid" && (
-//                       <button
-//                         onClick={() => handlePayment(asset)}
-//                         className="btn btn-xs btn-error"
-//                       >
-//                         Pay
-//                       </button>
-//                     )}
-
-//                     <button
-//                       onClick={() => setSelectedAsset(asset)}
-//                       className="btn btn-xs btn-outline"
-//                     >
-//                       View
-//                     </button>
-
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-
-//           </table>
-
-//           <div className="text-center p-3">
-//             <button onClick={refetch} className="btn btn-sm">
-//               Refresh
-//             </button>
-//           </div>
-
-//         </div>
-//       )}
-
-//       {/* ================= MODAL ================= */}
-//       {selectedAsset && (
-//         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-
-//           <div className="bg-white w-96 rounded-lg p-6 shadow-lg">
-
-//             <h3 className="text-xl font-bold mb-4">
-//               {selectedAsset.assetName}
-//             </h3>
-
-//             <div className="space-y-1 text-sm text-gray-700">
-//               <p><b>Type:</b> {selectedAsset.assetType || "N/A"}</p>
-//               <p><b>Status:</b> {selectedAsset.status}</p>
-//               <p><b>Delivery:</b> {selectedAsset.deliveryStatus}</p>
-//               <p><b>Price:</b> {selectedAsset.price || "—"}</p>
-//             </div>
-
-//             <div className="my-4 border-t"></div>
-
-//             {/* ✅ FIXED: _id PASS */}
-//             {selectedAsset.status !== "returned" && (
-//               <div className="mb-4">
-//                 <ReturnAsset _id={selectedAsset._id} />
-//               </div>
-//             )}
-
-//             <button
-//               onClick={() => setSelectedAsset(null)}
-//               className="w-full bg-gray-200 hover:bg-gray-300 text-black py-2 rounded"
-//             >
-//               Close
-//             </button>
-
-//           </div>
-
-//         </div>
-//       )}
-
-//     </div>
-//   );
-// };
-
-// export default MyAssets;
-
-
-// import React, { useState } from "react";
-// import { useQuery } from "@tanstack/react-query";
-// import { useNavigate } from "react-router-dom";
-// import useAuth from "../../hooks/useAuth";
-// import useAxiosSecure from "../../hooks/useAxiosSecure";
-// import ReturnAsset from "./ReturnAsset";
-
-// const MyAssets = () => {
-//   const { user } = useAuth();
-//   const axiosSecure = useAxiosSecure();
-//   const navigate = useNavigate();
-//   const [selectedAsset, setSelectedAsset] = useState(null);
-
-//   // ================= FETCH ASSETS =================
-//   const {
-//     data: assets = [],
-//     isLoading,
-//     isError,
-//     refetch,
-//   } = useQuery({
-//     queryKey: ["my-assets", user?.email],
-//     enabled: !!user?.email,
-
-//     queryFn: async () => {
-//       const res = await axiosSecure.get(
-//         `/assigned-assets?email=${user.email}`
-//       );
-//       return res.data;
-//     },
-//   });
-
-//   // ================= PAYMENT =================
-//   const handlePayment = (asset) => {
-//     navigate(`/dashboard/payment/${asset._id}`);
-//   };
-
-//   // ================= LOADING =================
-//   if (isLoading) {
-//     return (
-//       <div className="flex justify-center items-center min-h-[60vh]">
-//         <span className="loading loading-spinner loading-lg"></span>
-//       </div>
-//     );
-//   }
-
-//   // ================= ERROR =================
-//   if (isError) {
-//     return (
-//       <div className="text-center text-red-500 mt-10">
-//         Failed to load assets
-//         <br />
-//         <button onClick={refetch} className="btn btn-sm mt-3">
-//           Retry
-//         </button>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="p-4 md:p-6">
-
-//       {/* HEADER */}
-//       <div className="flex justify-between mb-6">
-//         <h2 className="text-2xl font-bold">📦 My Assets</h2>
-//         <p>Total: {assets.length}</p>
-//       </div>
-
-//       {/* EMPTY */}
-//       {assets.length === 0 ? (
-//         <div className="text-center py-10">No assets found</div>
-//       ) : (
-//         <div className="overflow-x-auto border rounded-lg bg-white">
-
-//           <table className="table">
-//             <thead>
-//               <tr>
-//                 <th>#</th>
-//                 <th>Asset</th>
-//                 <th>Price</th>
-//                 <th>Payment</th>
-//                 <th>Delivery</th>
-//                 <th>Actions</th>
-//               </tr>
-//             </thead>
-
-//             <tbody>
-//               {assets.map((asset, index) => (
-//                 <tr key={asset._id}>
-
-//                   <td>{index + 1}</td>
-
-//                   {/* ASSET */}
-//                   <td className="flex items-center gap-2">
-//                     <img
-//                       src={asset.image || "https://i.ibb.co/4pDNDk1/avatar.png"}
-//                       className="w-8 h-8 rounded-full"
-//                       alt="asset"
-//                     />
-//                     <span>{asset.assetName}</span>
-//                   </td>
-
-//                   {/* PRICE */}
-//                   <td>{asset.price}</td>
-
-//                   {/* PAYMENT */}
-//                   <td>
-//                     <span
-//                       className={`badge ${
-//                         asset.paymentStatus === "paid"
-//                           ? "badge-success"
-//                           : "badge-error"
-//                       }`}
-//                     >
-//                       {asset.paymentStatus || "unpaid"}
-//                     </span>
-//                   </td>
-
-//                   {/* DELIVERY */}
-//                   <td>
-//                     <span className="badge badge-info">
-//                       {asset.deliveryStatus || "pending"}
-//                     </span>
-//                   </td>
-
-//                   {/* ACTIONS */}
-//                   <td className="flex gap-2">
-
-//                     {asset.paymentStatus !== "paid" && (
-//                       <button
-//                         onClick={() => handlePayment(asset)}
-//                         className="btn btn-xs btn-error"
-//                       >
-//                         Pay
-//                       </button>
-//                     )}
-
-//                     <button
-//                       onClick={() => setSelectedAsset(asset)}
-//                       className="btn btn-xs btn-outline"
-//                     >
-//                       View
-//                     </button>
-
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-
-//           </table>
-
-//         </div>
-//       )}
-
-//       {/* ================= MODAL ================= */}
-//       {selectedAsset && (
-//         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-
-//           <div className="bg-white w-96 rounded-lg p-6 shadow-lg">
-
-//             <h3 className="text-xl font-bold mb-4">
-//               {selectedAsset.assetName}
-//             </h3>
-
-//             <div className="space-y-1 text-sm">
-//               <p><b>Type:</b> {selectedAsset.assetType}</p>
-//               <p><b>Status:</b> {selectedAsset.status}</p>
-//               <p><b>Delivery:</b> {selectedAsset.deliveryStatus}</p>
-//               <p><b>Price:</b> {selectedAsset.price}</p>
-//             </div>
-
-//             <div className="my-4 border-t"></div>
-
-//             {/* RETURN BUTTON */}
-//             {selectedAsset.status !== "returned" && (
-//               <ReturnAsset
-//                 _id={selectedAsset._id}
-//                 onClose={() => {
-//                   setSelectedAsset(null);
-//                   refetch();
-//                 }}
-//               />
-//             )}
-
-//             <button
-//               onClick={() => setSelectedAsset(null)}
-//               className="w-full bg-gray-200 py-2 rounded mt-2"
-//             >
-//               Close
-//             </button>
-
-//           </div>
-
-//         </div>
-//       )}
-
-//     </div>
-//   );
-// };
-
-// export default MyAssets;
 
 import React, { useMemo, useState } from "react";
-import useAssignedAssets from "../../hooks/useAssignedAssets";
-import useReturnAsset from "../../hooks/returnAsset";
-
-import {
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { 
+  FaSearch, 
+  FaFilter, 
+  FaLaptop, 
+  FaMobile, 
+  FaDesktop, 
+  FaPrint, 
+  FaCamera,
+  FaArrowLeft,
+  FaArrowRight,
+  FaSyncAlt,
+  FaCheckCircle,
+  FaClock,
   FaBoxOpen,
-  FaUndo,
-  FaSearch,
   FaBuilding,
   FaCalendarAlt,
-  FaCheckCircle,
+  FaSpinner
 } from "react-icons/fa";
+import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const MyAssets = () => {
-  const { assets = [], isLoading, refetch } = useAssignedAssets();
-  const returnAsset = useReturnAsset();
+  const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
 
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
 
+  // ================= FETCH ASSIGNED ASSETS =================
+  const { 
+    data: assets = [], 
+    isLoading, 
+    isError,
+    refetch,
+    error 
+  } = useQuery({
+    queryKey: ["my-assets"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/assigned-assets");
+      console.log("Fetched assets:", res.data);
+      return res.data || [];
+    },
+  });
+
+  // ================= RETURN ASSET MUTATION =================
+  const returnAsset = useMutation({
+    mutationFn: async (id) => {
+      const res = await axiosSecure.patch(`/assigned-assets/return/${id}`);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["my-assets"]);
+      Swal.fire({
+        icon: "success",
+        title: "Asset Returned!",
+        text: "Asset has been returned successfully",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    },
+    onError: (err) => {
+      console.error("Return Error:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Return Failed",
+        text: err.response?.data?.message || "Failed to return asset",
+        confirmButtonColor: "#d33",
+      });
+    },
+  });
+
+  // ================= FILTERED ASSETS =================
   const filteredAssets = useMemo(() => {
-    if (!Array.isArray(assets)) return [];
-
-    return assets.filter((asset) => {
-      const name = asset?.assetName?.toLowerCase() || "";
-
-      const matchesSearch = name.includes(search.toLowerCase());
-
-      const matchesFilter =
-        filter === "all" ? true : asset?.assetType === filter;
-
-      return matchesSearch && matchesFilter;
-    });
+    let result = [...assets];
+    
+    // Search filter
+    if (search) {
+      result = result.filter((item) =>
+        item.assetName?.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    
+    // Type filter
+    if (filter !== "all") {
+      result = result.filter((item) =>
+        item.assetType?.toLowerCase() === filter.toLowerCase()
+      );
+    }
+    
+    return result;
   }, [assets, search, filter]);
 
-  const handleReturn = async (id) => {
-    try {
-      await returnAsset(id);
-      refetch();
-    } catch (err) {
-      console.log(err);
+  // ================= PAGINATION =================
+  const totalPages = Math.ceil(filteredAssets.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedAssets = filteredAssets.slice(startIndex, startIndex + itemsPerPage);
+
+  // ================= HANDLE RETURN =================
+  const handleReturn = async (id, assetName) => {
+    const result = await Swal.fire({
+      title: "Return Asset?",
+      html: `
+        <div class="text-left">
+          <p><strong>Asset:</strong> ${assetName}</p>
+          <p class="text-sm text-gray-500">Are you sure you want to return this asset?</p>
+        </div>
+      `,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Return",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      returnAsset.mutate(id);
     }
   };
 
+  // ================= GET ASSET ICON =================
+  const getAssetIcon = (assetName) => {
+    const name = assetName?.toLowerCase() || "";
+    if (name.includes("laptop") || name.includes("computer")) return <FaDesktop className="text-blue-500" />;
+    if (name.includes("mobile") || name.includes("phone")) return <FaMobile className="text-green-500" />;
+    if (name.includes("printer")) return <FaPrint className="text-purple-500" />;
+    if (name.includes("camera")) return <FaCamera className="text-yellow-500" />;
+    return <FaLaptop className="text-gray-500" />;
+  };
+
+  // ================= FORMAT DATE =================
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    } catch {
+      return "Invalid Date";
+    }
+  };
+
+  // ================= LOADING STATE =================
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <span className="loading loading-spinner loading-lg"></span>
+      <div className="flex flex-col justify-center items-center h-96">
+        <FaSpinner className="animate-spin text-4xl text-primary mb-4" />
+        <p className="text-gray-500">Loading your assets...</p>
+      </div>
+    );
+  }
+
+  // ================= ERROR STATE =================
+  if (isError) {
+    return (
+      <div className="text-center mt-20">
+        <div className="alert alert-error shadow-lg max-w-md mx-auto">
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Failed to load assets! {error?.message}</span>
+          </div>
+        </div>
+        <button className="btn btn-primary mt-4" onClick={() => refetch()}>
+          <FaSyncAlt className="mr-2" />
+          Try Again
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
-
-      <h1 className="text-2xl font-bold flex gap-2 items-center">
-        <FaBoxOpen /> My Assets
-      </h1>
-
-      <p className="mb-4 text-gray-500">
-        Assigned assets list
-      </p>
-
-      {/* search */}
-      <input
-        className="input input-bordered w-full mb-3"
-        placeholder="Search asset..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-
-      {/* filter */}
-      <select
-        className="select select-bordered w-full mb-5"
-        value={filter}
-        onChange={(e) => setFilter(e.target.value)}
-      >
-        <option value="all">All</option>
-        <option value="Returnable">Returnable</option>
-        <option value="Non-returnable">Non-returnable</option>
-      </select>
-
-      {filteredAssets.length === 0 ? (
-        <p>No assets found</p>
-      ) : (
-        filteredAssets.map((asset) => (
-          <div key={asset._id} className="border p-4 mb-3 rounded">
-
-            <h2 className="font-bold">{asset.assetName}</h2>
-            <p>{asset.assetType}</p>
-
-            <p>{asset.companyName}</p>
-
-            <p>
-              Assigned:{" "}
-              {new Date(asset.assignmentDate).toLocaleDateString()}
+    <div className="p-4 md:p-6 bg-gray-50 min-h-screen">
+      {/* HEADER SECTION */}
+      <div className="mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 flex items-center gap-3">
+              <FaBoxOpen className="text-primary" />
+              My Assets
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">
+              View and manage all assets assigned to you
             </p>
-
-            <span className="badge">
-              {asset.returnStatus || "Assigned"}
-            </span>
-
-            {asset.assetType === "Returnable" &&
-            asset.returnStatus !== "Returned" && (
-              <button
-                className="btn btn-primary mt-2"
-                onClick={() => handleReturn(asset._id)}
-              >
-                <FaUndo /> Return
-              </button>
-            )}
           </div>
-        ))
+          
+          <div className="badge badge-primary badge-lg px-4 py-4">
+            Total Assets: {filteredAssets.length}
+          </div>
+        </div>
+      </div>
+
+      {/* FILTERS SECTION */}
+      <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Search Input */}
+          <div className="flex-1 relative">
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search assets by name..."
+              className="input input-bordered w-full pl-10 focus:outline-none focus:ring-2 focus:ring-primary"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
+          </div>
+
+          {/* Filter Dropdown */}
+          <div className="relative">
+            <FaFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" />
+            <select
+              className="select select-bordered pl-10 w-full md:w-48 focus:outline-none focus:ring-2 focus:ring-primary"
+              value={filter}
+              onChange={(e) => {
+                setFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+            >
+              <option value="all">All Types</option>
+              <option value="returnable">Returnable</option>
+              <option value="non-returnable">Non-returnable</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* ASSETS TABLE */}
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="table w-full">
+            <thead className="bg-gradient-to-r from-primary to-primary-focus text-white">
+              <tr>
+                <th className="text-center">#</th>
+                <th>Asset</th>
+                <th>Type</th>
+                <th>Company</th>
+                <th>Status</th>
+                <th>Assigned Date</th>
+                <th className="text-center">Action</th>
+              </tr>
+            </thead>
+            
+            <tbody>
+              {paginatedAssets.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="text-center py-16">
+                    <div className="flex flex-col items-center gap-3">
+                      <FaBoxOpen className="text-6xl text-gray-300" />
+                      <h3 className="text-xl font-semibold text-gray-500">No Assets Found</h3>
+                      <p className="text-gray-400">
+                        {search || filter !== "all" 
+                          ? "Try changing your search or filter criteria"
+                          : "You don't have any assigned assets yet"}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                paginatedAssets.map((asset, index) => (
+                  <tr key={asset._id} className="hover:bg-gray-50 transition duration-150">
+                    <td className="text-center font-semibold text-gray-500">
+                      {startIndex + index + 1}
+                    </td>
+                    
+                    <td>
+                      <div className="flex items-center gap-3">
+                        <div className="avatar placeholder">
+                          <div className="bg-primary/10 rounded-full w-10 h-10 flex items-center justify-center">
+                            {getAssetIcon(asset.assetName)}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="font-semibold">{asset.assetName || "N/A"}</div>
+                          <div className="text-xs text-gray-500">ID: {asset.assetId?.slice(-6) || "N/A"}</div>
+                        </div>
+                      </div>
+                    </td>
+                    
+                    <td>
+                      <span className={`badge ${
+                        asset.assetType === "Returnable" 
+                          ? "badge-info bg-blue-100 text-blue-700 border-none" 
+                          : "badge-secondary bg-purple-100 text-purple-700 border-none"
+                      }`}>
+                        {asset.assetType || "N/A"}
+                      </span>
+                    </td>
+                    
+                    <td>
+                      <div className="flex items-center gap-2">
+                        <FaBuilding className="text-gray-400 text-sm" />
+                        <span>{asset.companyName || "N/A"}</span>
+                      </div>
+                    </td>
+                    
+                    <td>
+                      <span className={`badge gap-1 px-3 py-2 ${
+                        asset.returnStatus === "Returned"
+                          ? "badge-success bg-green-100 text-green-700 border-none"
+                          : "badge-warning bg-yellow-100 text-yellow-700 border-none"
+                      }`}>
+                        {asset.returnStatus === "Returned" ? (
+                          <FaCheckCircle className="text-sm" />
+                        ) : (
+                          <FaClock className="text-sm" />
+                        )}
+                        {asset.returnStatus || "Assigned"}
+                      </span>
+                    </td>
+                    
+                    <td>
+                      <div className="flex items-center gap-2">
+                        <FaCalendarAlt className="text-gray-400 text-sm" />
+                        <span className="text-sm">{formatDate(asset.assignmentDate)}</span>
+                      </div>
+                    </td>
+                    
+                    <td className="text-center">
+                      {asset.assetType === "Returnable" && asset.returnStatus !== "Returned" ? (
+                        <button
+                          onClick={() => handleReturn(asset._id, asset.assetName)}
+                          className="btn btn-sm btn-primary gap-2"
+                          disabled={returnAsset.isPending}
+                        >
+                          {returnAsset.isPending ? (
+                            <FaSpinner className="animate-spin" />
+                          ) : (
+                            <FaArrowLeft className="text-sm" />
+                          )}
+                          Return
+                        </button>
+                      ) : (
+                        <span className="text-gray-400 text-sm">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* PAGINATION */}
+        {totalPages > 1 && (
+          <div className="flex justify-between items-center p-4 border-t bg-gray-50">
+            <div className="text-sm text-gray-500">
+              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredAssets.length)} of {filteredAssets.length} assets
+            </div>
+            <div className="join">
+              <button
+                className="join-item btn btn-sm"
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                <FaArrowLeft />
+              </button>
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i}
+                  className={`join-item btn btn-sm ${currentPage === i + 1 ? "btn-active" : ""}`}
+                  onClick={() => setCurrentPage(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                className="join-item btn btn-sm"
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >
+                <FaArrowRight />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* STATS SECTION */}
+      {filteredAssets.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <div className="bg-white rounded-lg shadow-sm p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-500 text-sm">Total Assets</p>
+                <p className="text-2xl font-bold">{filteredAssets.length}</p>
+              </div>
+              <FaBoxOpen className="text-3xl text-primary/60" />
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-500 text-sm">Returnable Assets</p>
+                <p className="text-2xl font-bold">
+                  {filteredAssets.filter(a => a.assetType === "Returnable" && a.returnStatus !== "Returned").length}
+                </p>
+              </div>
+              <FaArrowLeft className="text-3xl text-green-500/60" />
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow-sm p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-500 text-sm">Returned Assets</p>
+                <p className="text-2xl font-bold">
+                  {filteredAssets.filter(a => a.returnStatus === "Returned").length}
+                </p>
+              </div>
+              <FaCheckCircle className="text-3xl text-blue-500/60" />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
 };
 
 export default MyAssets;
-
-// import React, { useMemo, useState } from "react";
-// import useAssignedAssets from "../../hooks/useAssignedAssets";
-// import useReturnAsset from "../../hooks/returnAsset";
-
-// import {
-//   FaBoxOpen,
-//   FaUndo,
-//   FaSearch,
-//   FaBuilding,
-//   FaCalendarAlt,
-//   FaCheckCircle,
-// } from "react-icons/fa";
-
-// const MyAssets = () => {
-//   const { assets, isLoading, refetch } =
-//     useAssignedAssets();
-
-//   const returnAsset = useReturnAsset();
-
-//   const [search, setSearch] = useState("");
-//   const [filter, setFilter] = useState("all");
-
-//   // ======================================================
-//   // FILTER + SEARCH
-//   // ======================================================
-
-//   const filteredAssets = useMemo(() => {
-//     return assets.filter((asset) => {
-
-//       const matchesSearch =
-//         asset.assetName
-//           ?.toLowerCase()
-//           .includes(search.toLowerCase());
-
-//       const matchesFilter =
-//         filter === "all"
-//           ? true
-//           : asset.assetType === filter;
-
-//       return matchesSearch && matchesFilter;
-//     });
-//   }, [assets, search, filter]);
-
-//   // ======================================================
-//   // RETURN HANDLER
-//   // ======================================================
-
-//   const handleReturn = async (id) => {
-//     try {
-
-//       await returnAsset(id);
-
-//       refetch();
-
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   // ======================================================
-//   // LOADING
-//   // ======================================================
-
-//   if (isLoading) {
-//     return (
-//       <div className="flex justify-center items-center min-h-[60vh]">
-//         <span className="loading loading-spinner loading-lg text-primary"></span>
-//       </div>
-//     );
-//   }
-
-//   // ======================================================
-//   // UI
-//   // ======================================================
-
-//   return (
-//     <div className="p-4 md:p-6">
-
-//       {/* HEADER */}
-//       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
-
-//         <div>
-//           <h1 className="text-3xl font-bold flex items-center gap-3">
-//             <FaBoxOpen className="text-primary" />
-//             My Assets
-//           </h1>
-
-//           <p className="text-base-content/70 mt-2">
-//             Manage all assigned company assets
-//           </p>
-//         </div>
-
-//         <div className="stats shadow border">
-
-//           <div className="stat">
-//             <div className="stat-title">
-//               Total Assets
-//             </div>
-
-//             <div className="stat-value text-primary">
-//               {assets.length}
-//             </div>
-//           </div>
-
-//         </div>
-
-//       </div>
-
-//       {/* FILTERS */}
-//       <div className="bg-base-100 rounded-2xl shadow-md border border-base-300 p-5 mb-8">
-
-//         <div className="grid md:grid-cols-2 gap-4">
-
-//           {/* SEARCH */}
-//           <div className="relative">
-
-//             <FaSearch className="absolute top-4 left-4 text-base-content/50" />
-
-//             <input
-//               type="text"
-//               placeholder="Search by asset name..."
-//               value={search}
-//               onChange={(e) =>
-//                 setSearch(e.target.value)
-//               }
-//               className="input input-bordered w-full pl-12"
-//             />
-//           </div>
-
-//           {/* FILTER */}
-//           <select
-//             value={filter}
-//             onChange={(e) =>
-//               setFilter(e.target.value)
-//             }
-//             className="select select-bordered w-full"
-//           >
-//             <option value="all">
-//               All Types
-//             </option>
-
-//             <option value="Returnable">
-//               Returnable
-//             </option>
-
-//             <option value="Non-returnable">
-//               Non-returnable
-//             </option>
-//           </select>
-
-//         </div>
-//       </div>
-
-//       {/* EMPTY */}
-//       {!filteredAssets.length ? (
-//         <div className="bg-base-100 rounded-2xl shadow-md p-10 text-center border border-base-300">
-
-//           <img
-//             src="https://i.ibb.co/4fXsK1D/empty-box.png"
-//             alt="empty"
-//             className="w-32 mx-auto mb-4 opacity-70"
-//           />
-
-//           <h2 className="text-2xl font-bold mb-2">
-//             No Assets Found
-//           </h2>
-
-//           <p className="text-base-content/70">
-//             You don't have any assigned assets yet.
-//           </p>
-
-//         </div>
-//       ) : (
-
-//         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-
-//           {filteredAssets.map((asset) => (
-
-//             <div
-//               key={asset._id}
-//               className="bg-base-100 rounded-2xl shadow-lg border border-base-300 overflow-hidden hover:shadow-2xl transition duration-300"
-//             >
-
-//               {/* IMAGE */}
-//               <figure className="h-56 overflow-hidden bg-base-200">
-
-//                 <img
-//                   src={
-//                     asset.assetImage ||
-//                     "https://i.ibb.co/2Wz5b7z/user.png"
-//                   }
-//                   alt={asset.assetName}
-//                   className="w-full h-full object-cover hover:scale-105 transition duration-300"
-//                 />
-
-//               </figure>
-
-//               {/* CONTENT */}
-//               <div className="p-5 space-y-4">
-
-//                 {/* TITLE */}
-//                 <div className="flex items-start justify-between gap-4">
-
-//                   <div>
-//                     <h2 className="text-xl font-bold">
-//                       {asset.assetName}
-//                     </h2>
-
-//                     <p className="text-sm text-base-content/60">
-//                       {asset.assetType}
-//                     </p>
-//                   </div>
-
-//                   <div
-//                     className={`badge ${
-//                       asset.returnStatus === "Returned"
-//                         ? "badge-success"
-//                         : "badge-warning"
-//                     }`}
-//                   >
-//                     {asset.returnStatus}
-//                   </div>
-
-//                 </div>
-
-//                 {/* INFO */}
-//                 <div className="space-y-3 text-sm">
-
-//                   <div className="flex items-center gap-3">
-
-//                     <FaBuilding className="text-primary" />
-
-//                     <span>
-//                       {asset.companyName ||
-//                         "Unknown Company"}
-//                     </span>
-
-//                   </div>
-
-//                   <div className="flex items-center gap-3">
-
-//                     <FaCalendarAlt className="text-primary" />
-
-//                     <span>
-//                       Assigned:{" "}
-//                       {new Date(
-//                         asset.assignmentDate
-//                       ).toLocaleDateString()}
-//                     </span>
-
-//                   </div>
-
-//                   {asset.returnDate && (
-//                     <div className="flex items-center gap-3">
-
-//                       <FaCheckCircle className="text-success" />
-
-//                       <span>
-//                         Returned:{" "}
-//                         {new Date(
-//                           asset.returnDate
-//                         ).toLocaleDateString()}
-//                       </span>
-
-//                     </div>
-//                   )}
-
-//                 </div>
-
-//                 {/* ACTION */}
-//                 <div className="pt-3">
-
-//                   {asset.assetType ===
-//                     "Returnable" &&
-//                   asset.returnStatus !==
-//                     "Returned" ? (
-
-//                     <button
-//                       onClick={() =>
-//                         handleReturn(asset._id)
-//                       }
-//                       className="btn btn-primary w-full"
-//                     >
-//                       <FaUndo />
-//                       Return Asset
-//                     </button>
-
-//                   ) : (
-//                     <button
-//                       disabled
-//                       className="btn btn-success w-full"
-//                     >
-//                       <FaCheckCircle />
-//                       Completed
-//                     </button>
-//                   )}
-
-//                 </div>
-
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default MyAssets;

@@ -130,3 +130,71 @@ const RequestAsset = () => {
 };
 
 export default RequestAsset;
+
+// import React, { useState } from "react";
+// import Swal from "sweetalert2";
+// import useAxiosSecure from "../../../hooks/useAxiosSecure";
+
+// const RequestAsset = ({ asset }) => {
+//   const axiosSecure = useAxiosSecure();
+//   const [note, setNote] = useState("");
+
+//   const handleRequest = async (e) => {
+//     e.preventDefault();
+
+//     if (!asset?._id) {
+//       return Swal.fire({
+//         icon: "error",
+//         title: "No Asset Found",
+//         text: "Asset is missing",
+//       });
+//     }
+
+//     try {
+//       const res = await axiosSecure.post("/requests", {
+//         assetId: asset._id,
+//         note,
+//       });
+
+//       if (res.data?.insertedId || res.data?._id) {
+//         Swal.fire({
+//           icon: "success",
+//           title: "Request Sent!",
+//           timer: 1500,
+//           showConfirmButton: false,
+//         });
+
+//         setNote("");
+//       }
+//     } catch (error) {
+//       Swal.fire({
+//         icon: "error",
+//         title: "Failed",
+//         text: error?.response?.data?.message || "Something went wrong",
+//       });
+//     }
+//   };
+
+//   return (
+//     <div className="p-4 md:p-6 max-w-xl mx-auto">
+//       <h2 className="text-xl font-bold mb-4">
+//         Request Asset: {asset?.productName || asset?.name}
+//       </h2>
+
+//       <form onSubmit={handleRequest} className="space-y-4">
+//         <textarea
+//           value={note}
+//           onChange={(e) => setNote(e.target.value)}
+//           className="textarea textarea-bordered w-full"
+//           placeholder="Why do you need this asset?"
+//         />
+
+//         <button className="btn btn-primary w-full">
+//           Send Request
+//         </button>
+//       </form>
+//     </div>
+//   );
+// };
+
+// export default RequestAsset;
